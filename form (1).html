@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link & PDF Upload Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input[type="url"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+        }
+
+        .file-info {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Submit Links & Documents</h1>
+        <p class="subtitle">Share your links and upload PDF files</p>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="singleLink">Single Link</label>
+                <input 
+                    type="url" 
+                    id="singleLink" 
+                    name="singleLink" 
+                    placeholder="https://example.com"
+                >
+                <p class="help-text">Enter a single URL</p>
+            </div>
+
+            <div class="form-group">
+                <label for="multipleLinks">Multiple Links</label>
+                <textarea 
+                    id="multipleLinks" 
+                    name="multipleLinks" 
+                    placeholder="https://example1.com&#10;https://example2.com&#10;https://example3.com"
+                ></textarea>
+                <p class="help-text">Enter multiple URLs, one per line</p>
+            </div>
+
+            <div class="form-group">
+                <label for="pdfFiles">PDF Documents</label>
+                <div class="file-upload">
+                    <input 
+                        type="file" 
+                        id="pdfFiles" 
+                        name="pdfFiles" 
+                        accept=".pdf"
+                        multiple
+                    >
+                </div>
+                <p class="help-text">Select one or more PDF files</p>
+                <div id="fileList" class="file-info"></div>
+            </div>
+
+            <button type="submit">Submit Form</button>
+        </form>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('pdfFiles');
+        const fileList = document.getElementById('fileList');
+        const form = document.getElementById('uploadForm');
+
+        // Display selected files
+        fileInput.addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                let fileNames = Array.from(files).map(file => file.name).join(', ');
+                fileList.textContent = `Selected: ${fileNames}`;
+            } else {
+                fileList.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const singleLink = document.getElementById('singleLink').value;
+            const multipleLinks = document.getElementById('multipleLinks').value;
+            const files = fileInput.files;
+
+            // Create FormData object
+            const formData = new FormData();
+            formData.append('singleLink', singleLink);
+            formData.append('multipleLinks', multipleLinks);
+            
+            // Add all selected files
+            for (let i = 0; i < files.length; i++) {
+                formData.append('pdfFiles', files[i]);
+            }
+
+            // Log the data (in a real application, you would send this to a server)
+            console.log('Form Data:');
+            console.log('Single Link:', singleLink);
+            console.log('Multiple Links:', multipleLinks);
+            console.log('Files:', files);
+
+            alert('Form submitted! Check the console for details.\n\nIn a real application, this data would be sent to a server.');
+            
+            // Uncomment below to actually send to a server
+            /*
+            fetch('/your-endpoint', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Form submitted successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting form');
+            });
+            */
+        });
+    </script>
+</body>
+</html>
